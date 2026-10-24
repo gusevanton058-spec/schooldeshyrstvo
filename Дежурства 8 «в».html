@@ -1,0 +1,1065 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Дежурства 8 «в»</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Marck+Script&display=swap">
+<style>
+/* Идея: классный журнал. Тетрадная клетка в шапке, синие чернила для действий,
+   зелёный / жёлтый / красный для статусов, как отметки в журнале. */
+:root{
+  --bg:#f1f4fa; --surface:#ffffff; --surface-2:#f6f8fd; --ink:#18203a; --ink-2:#47526e; --muted:#6f7a96;
+  --line:#d8deec; --line-2:#e7ebf5; --accent:#2447d6; --accent-ink:#ffffff; --accent-soft:#e3e9ff;
+  --done:#17804f; --done-bg:#d9f2e5; --sick:#935a00; --sick-bg:#ffecc8; --ref:#c0302a; --ref-bg:#fddfdc;
+  --plan:#4a5878; --plan-bg:#e6ebf6; --paid:#0b7480; --paid-bg:#d2eff2;
+  --shadow:0 1px 2px rgba(24,32,58,.06),0 8px 24px -12px rgba(24,32,58,.18);
+  --overlay:rgba(14,19,36,.5);
+  --f-ui:'Golos Text',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-hand:'Marck Script','Golos Text',cursive;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10131d; --surface:#181d2b; --surface-2:#1e2434; --ink:#e8ecf7; --muted:#8c97b3; --ink-2:#b0b9d0;
+  --line:#2c3449; --line-2:#232a3d; --accent:#8ea6ff; --accent-ink:#0f1530; --accent-soft:#242e5a;
+  --done:#6fdc9f; --done-bg:#163a29; --sick:#f5c56e; --sick-bg:#3b2e12; --ref:#ff8d84; --ref-bg:#42201e;
+  --plan:#a3b3d8; --plan-bg:#232b41; --paid:#70d6e0; --paid-bg:#133639;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6); --overlay:rgba(0,0,0,.65); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10131d; --surface:#181d2b; --surface-2:#1e2434; --ink:#e8ecf7; --muted:#8c97b3; --ink-2:#b0b9d0;
+  --line:#2c3449; --line-2:#232a3d; --accent:#8ea6ff; --accent-ink:#0f1530; --accent-soft:#242e5a;
+  --done:#6fdc9f; --done-bg:#163a29; --sick:#f5c56e; --sick-bg:#3b2e12; --ref:#ff8d84; --ref-bg:#42201e;
+  --plan:#a3b3d8; --plan-bg:#232b41; --paid:#70d6e0; --paid-bg:#133639;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6); --overlay:rgba(0,0,0,.65); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+.shell{max-width:1120px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.top{display:flex;align-items:center;gap:12px;padding-block:14px 10px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1;margin-right:auto;min-width:0}
+.brand b{font-family:var(--f-hand);font-weight:400;font-size:34px;color:var(--accent);letter-spacing:.01em}
+.brand span{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.top-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.store{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.store i{width:7px;height:7px;border-radius:50%;background:var(--done);display:inline-block}
+.store.warn i{background:var(--sick)} .store.bad i{background:var(--ref)}
+
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);display:flex;gap:4px;overflow-x:auto;padding-block:6px;margin-inline:-4px;padding-inline:4px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:0;background:transparent;color:var(--ink-2);padding:9px 14px;border-radius:9px;font-weight:500;white-space:nowrap}
+.tab:hover{background:var(--line-2)}
+.tab[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+.tab .cnt{display:inline-block;min-width:18px;margin-left:6px;padding:0 5px;border-radius:9px;background:var(--ref);color:#fff;font-size:11px;line-height:18px;text-align:center}
+
+main{padding-top:18px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);min-width:0}
+.card h2{font-size:17px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 small{font-weight:400;color:var(--muted);font-size:13px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.lead{color:var(--ink-2);font-size:14px}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:9px;font-weight:500;line-height:1.2;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn:hover{background:var(--surface-2);border-color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--ref);border-color:var(--ref)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.icon{padding:8px 11px}
+
+/* hero */
+.hero{display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);
+  background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:22px 22px;background-position:-1px -1px}
+.hero h1{font-size:clamp(22px,4.6vw,32px);font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.hero .sub{color:var(--ink-2);margin-top:4px}
+.daynav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.daylabel{display:flex;flex-direction:column;line-height:1.15;min-width:150px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:6px 12px}
+.daylabel b{font-size:15px} .daylabel span{font-size:12px;color:var(--muted)}
+input[type=date],input[type=text],select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 10px;min-width:0}
+input[type=date]{padding:7px 10px}
+textarea{width:100%;resize:vertical}
+
+.banner{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:var(--r);border:1px solid var(--sick);background:var(--sick-bg);color:var(--sick)}
+.banner.ok{border-color:var(--done);background:var(--done-bg);color:var(--done)}
+
+/* home grid */
+.home{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.col{display:contents}
+.o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}
+@media (min-width:960px){
+  .home{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start}
+  .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+}
+
+/* slots */
+.progress{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.pip{width:26px;height:26px;border-radius:50%;border:2px dashed var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted)}
+.pip.on{border:2px solid var(--done);background:var(--done);color:#fff}
+.slots{display:flex;flex-direction:column;gap:10px;list-style:none;margin:0;padding:0}
+.slot{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface-2)}
+.slot.s-done{border-color:var(--done)} .slot.s-refused{border-color:var(--ref)} .slot.s-sick{border-color:var(--sick)} .slot.s-paid{border-color:var(--paid)}
+.slot.s-sick .nm,.slot.s-refused .nm{text-decoration:line-through;text-decoration-thickness:1px;color:var(--ink-2)}
+.slot .who{display:flex;flex-direction:column;gap:4px;min-width:0}
+.slot .nm{font-weight:650;font-size:16px;overflow-wrap:anywhere}
+.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--line-2);color:var(--ink-2)}
+.tag.rep{background:var(--accent-soft);color:var(--accent)}
+.note{font-size:13px;color:var(--ink-2);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.marks{display:flex;gap:6px;flex-wrap:wrap}
+.mk{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:8px 11px;font-weight:550;font-size:14px}
+.mk b{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.mk.k-done b{background:var(--done-bg);color:var(--done)} .mk.k-sick b{background:var(--sick-bg);color:var(--sick)} .mk.k-refused b{background:var(--ref-bg);color:var(--ref)}
+.mk:hover{border-color:var(--muted)}
+.mk.on.k-done{background:var(--done);border-color:var(--done);color:#fff}.mk.on.k-sick{background:var(--sick);border-color:var(--sick);color:#fff}.mk.on.k-refused{background:var(--ref);border-color:var(--ref);color:#fff}
+.mk.on b{background:rgba(255,255,255,.22);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .mk.on{color:#10131d} :root:not([data-theme="light"]) .mk.on b{background:rgba(0,0,0,.18);color:#10131d}}
+:root[data-theme="dark"] .mk.on{color:#10131d} :root[data-theme="dark"] .mk.on b{background:rgba(0,0,0,.18);color:#10131d}
+@media (max-width:640px){.slot{grid-template-columns:minmax(0,1fr)} .marks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px} .mk{min-width:0;padding:9px 2px;justify-content:center;font-size:12.5px;gap:4px} .mk b{width:18px;height:18px;font-size:12px;border-radius:5px}}
+.preview .slot{background:transparent;border-style:dashed}
+
+.add-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.add-row select{flex:1 1 180px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.qchip{display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);font-size:14px}
+.qchip i{font-style:normal;font-size:12px;color:var(--muted)}
+.qchip.ret{border-color:var(--sick);background:var(--sick-bg);color:var(--sick)}
+.qday{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px}
+.qday:first-child{margin-top:0}
+
+/* status chip */
+.st{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 8px;border-radius:7px;font-weight:700;font-size:15px;gap:6px}
+.st-done{background:var(--done-bg);color:var(--done)} .st-sick{background:var(--sick-bg);color:var(--sick)} .st-refused{background:var(--ref-bg);color:var(--ref)}
+.st-planned{background:var(--plan-bg);color:var(--plan);outline:1.5px dashed var(--plan);outline-offset:-2px} .st-paid{background:var(--paid-bg);color:var(--paid)}
+.st small{font-size:12px;font-weight:500}
+
+/* week strip */
+.week{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.wd{border:1px solid var(--line);border-radius:10px;padding:10px 8px;background:var(--surface-2);text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0}
+.wd:hover{border-color:var(--muted)}
+.wd.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.wd.today .dn{color:var(--accent)}
+.wd .dn{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between;gap:4px}
+.wd .dn em{font-style:normal;color:var(--muted);font-weight:500}
+.wd .ln{font-size:12.5px;display:flex;gap:5px;align-items:baseline;overflow-wrap:anywhere;line-height:1.25}
+.wd .ln b{flex:none;width:14px;text-align:center}
+.wd .ln.k-done b{color:var(--done)} .wd .ln.k-sick b{color:var(--sick)} .wd .ln.k-refused b{color:var(--ref)} .wd .ln.k-paid b{color:var(--paid)} .wd .ln.k-planned b{color:var(--plan)}
+.wd .ln.proj{opacity:.55}
+.wd.off{opacity:.55}
+@media (max-width:640px){.week{grid-template-columns:1fr}.wd{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 10px}.wd .dn{flex:0 0 100%}}
+
+/* stats */
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface-2)}
+.tile b{display:block;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;color:var(--ink-2);display:block;margin-top:2px}
+.tile.red b{color:var(--ref)} .tile.green b{color:var(--done)} .tile.amber b{color:var(--sick)}
+
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.list li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line-2);flex-wrap:wrap}
+.list li:first-child{border-top:0}
+.list .lt{display:flex;flex-direction:column;min-width:0;gap:1px}
+.list .lt b{font-weight:600;overflow-wrap:anywhere}
+.list .lt span{font-size:12.5px;color:var(--muted)}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600;background:var(--ref-bg);color:var(--ref)}
+.badge.sick{background:var(--sick-bg);color:var(--sick)} .badge.ok{background:var(--done-bg);color:var(--done)} .badge.paid{background:var(--paid-bg);color:var(--paid)}
+
+/* table */
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend .st{min-width:24px;height:24px;font-size:13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:7px 12px;font-weight:500;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);max-width:100%}
+table.grid{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums}
+.grid th,.grid td{border-bottom:1px solid var(--line-2);padding:0;text-align:center;height:40px}
+.grid thead th{position:sticky;top:0;background:var(--surface-2);font-weight:500;font-size:12px;color:var(--ink-2);height:48px;padding:4px 2px;border-bottom:1px solid var(--line)}
+.grid thead th b{display:block;font-size:13px;color:var(--ink);font-weight:600}
+.grid th.d{min-width:44px}
+.grid th.d.today{background:var(--accent-soft);color:var(--accent)} .grid th.d.today b{color:var(--accent)}
+.grid th.d.offc{opacity:.6}
+.grid th.who{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;padding:0 10px;font-weight:550;white-space:nowrap;min-width:140px;border-right:1px solid var(--line)}
+.grid thead th.who{z-index:3;background:var(--surface-2)}
+.grid th.who .n{color:var(--muted);font-weight:400;font-size:12px;margin-right:6px;display:inline-block;min-width:18px}
+.grid th.who .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ref);margin-left:6px}
+.grid tr.inact th.who{opacity:.55}
+.grid td.tot{min-width:46px;font-weight:600;border-left:1px solid var(--line-2);padding:0 6px}
+.grid thead th.tot{min-width:46px;border-left:1px solid var(--line-2)}
+.grid td.tot.debt.has{color:var(--ref)}
+.grid td.tot.ok{color:var(--done)}
+.grid td.offc{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--line-2) 6px 7px);color:var(--muted)}
+.cell{width:34px;height:30px;margin:auto;border:0;border-radius:7px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;background:transparent;padding:0}
+.cell.empty:hover{background:var(--line-2)}
+.cell.empty:hover::after{content:"+";color:var(--muted);font-weight:500}
+.cell.proj{opacity:.5}
+button.cell.st-planned{outline:1.5px dashed var(--plan);outline-offset:-2px}
+span.cell.st-planned{outline:1.5px dashed var(--plan);outline-offset:-2px}
+.grid tbody tr:hover th.who{background:var(--surface-2)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:100;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 60px -20px rgba(0,0,0,.5);width:100%;max-width:460px;max-height:100%;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.modal h3{font-size:18px;font-weight:650;overflow-wrap:anywhere}
+.modal .acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label,.lbl{font-size:13px;color:var(--ink-2);font-weight:500}
+.field input,.field select,.field textarea{width:100%}
+.stack{display:flex;flex-direction:column;gap:8px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mgrid .btn{justify-content:flex-start}
+.btn.k-done{border-color:var(--done);color:var(--done)} .btn.k-sick{border-color:var(--sick);color:var(--sick)} .btn.k-refused{border-color:var(--ref);color:var(--ref)} .btn.k-planned{border-color:var(--plan);color:var(--plan)}
+.btn.on.k-done{background:var(--done-bg)} .btn.on.k-sick{background:var(--sick-bg)} .btn.on.k-refused{background:var(--ref-bg)} .btn.on.k-planned{background:var(--plan-bg)}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:120;width:max-content;max-width:min(520px,calc(100% - 32px));display:none}
+#toast.show{display:flex;gap:12px;align-items:center;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);font-size:14px}
+#toast button{border:0;background:transparent;color:var(--accent);font-weight:650;padding:2px 4px;flex:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #toast button{color:#3150d9}}
+:root[data-theme="dark"] #toast button{color:#3150d9}
+
+/* students */
+.srow{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--line-2)}
+.srow:first-child{border-top:0}
+.srow .idx{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.srow .nm input{width:100%;font-weight:550}
+.srow .meta{grid-column:2/4;font-size:12.5px;color:var(--muted);display:flex;gap:6px 12px;flex-wrap:wrap}
+.srow .ctl{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.srow.off .nm input{opacity:.6}
+.srow.next{background:linear-gradient(90deg,var(--accent-soft),transparent 60%);margin-inline:-8px;padding-inline:8px;border-radius:8px}
+@media (max-width:560px){.srow{grid-template-columns:24px minmax(0,1fr)} .srow .ctl{grid-column:2;justify-content:flex-start}.srow .meta{grid-column:2}}
+.form-row{display:flex;gap:8px;flex-wrap:wrap}
+.form-row input[type=text]{flex:1 1 200px}
+.two{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:860px){.two{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}}
+
+/* history */
+details.wk{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);overflow:hidden}
+details.wk>summary{cursor:pointer;padding:11px 14px;font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+details.wk .inside{padding:4px 14px 12px;display:flex;flex-direction:column}
+.hday{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 12px;padding:9px 0;border-top:1px solid var(--line-2);align-items:start}
+.hday:first-child{border-top:0}
+.hday .dl{font-weight:600;font-size:14px;text-align:left;background:none;border:0;padding:0;color:var(--accent)}
+.hday .dl span{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.hrow{display:flex;gap:6px 10px;flex-wrap:wrap}
+.hrow span{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.hrow .st{min-width:22px;height:22px;font-size:12.5px;padding:0 6px}
+@media (max-width:560px){.hday{grid-template-columns:1fr}}
+.logline{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line-2);font-size:13.5px}
+.logline:first-child{border-top:0}
+.logline time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums;min-width:96px}
+.empty-state{padding:18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px}
+.kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.hint{font-size:13px;color:var(--muted)}
+
+.corpus{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.corpus{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:start}.corpus .c-journal{grid-column:2;grid-row:1/span 2}}
+.chk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;max-height:280px;overflow:auto;padding:2px}
+.chk{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--surface-2);cursor:pointer;font-size:14px;min-width:0}
+.chk span{overflow-wrap:anywhere}
+.chk:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.chk.off{opacity:.6}
+.chk input{flex:none;accent-color:var(--accent);width:16px;height:16px}
+</style>
+
+<div class="shell" id="shell">
+  <header class="top">
+    <div class="brand"><b>Дежурство</b><span id="classLabel">8 «в» взвод</span></div>
+    <div class="top-tools">
+      <span class="store" id="storeBadge" title="Где хранятся данные"><i></i><span>…</span></span>
+      <button class="btn icon" id="btnUndo" data-act="undo" title="Отменить последнее действие (Ctrl+Z)" aria-label="Отменить последнее действие">↶ Отменить</button>
+      <button class="btn icon" id="btnRedo" data-act="redo" title="Вернуть отменённое" aria-label="Вернуть отменённое">↷</button>
+    </div>
+  </header>
+  <nav class="tabs" id="tabs" aria-label="Разделы"></nav>
+  <main id="app"></main>
+</div>
+<div id="modalRoot"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- данные по умолчанию: список из файла «СПИСОК ДЕЖУРСТВ В 8 «в» взвода» ---------- */
+const DEFAULT_NAMES = ["Аракчеев А.", "Безруков В.", "Битадзе Т.", "Гусев А.", "Денисов И.", "Ереско Я.", "Жубанов В.", "Журавлева Б.", "Жук. Е.", "Кабанов Н.", "Логинова В.", "Мереняшев П.", "Мишин М.", "Мурашкин М.", "Потапов А.", "Пайгамов У.", "Патракеев Э.", "Поликаева Я.", "Романовский Д.", "Сидорин Д.", "Удалова К.", "Фокина З.", "Федяшкин В."];
+
+/* ---------- даты ---------- */
+const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const MON_NOM=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const WD=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+const WDS=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const isWeekday=s=>{const w=parse(s).getDay();return w>=1&&w<=5};
+const nextWeekday=s=>{while(!isWeekday(s))s=addDays(s,1);return s};
+const stepSchool=(s,dir)=>{do{s=addDays(s,dir)}while(!isWeekday(s));return s};
+const mondayOf=s=>addDays(s,-((parse(s).getDay()+6)%7));
+const fmtDM=s=>{const d=parse(s);return pad(d.getDate())+'.'+pad(d.getMonth()+1)};
+const fmtDMY=s=>fmtDM(s)+'.'+parse(s).getFullYear();
+const fmtLong=s=>{const d=parse(s);return WD[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()};
+const fmtDayMonth=s=>{const d=parse(s);return d.getDate()+' '+MON[d.getMonth()]};
+const todayStr=()=>window.__TODAY||ymd(new Date());
+const plural=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return f[(a>10&&a<20)?2:b>1&&b<5?1:b===1?0:2]};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtTs=ts=>new Date(ts).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+
+/* ---------- состояние ---------- */
+let state, undoStack=[], redoStack=[];
+const ui={tab:'home',viewDate:null,tableRange:'week',tableAnchor:null,showAllDebts:false,histOpen:null,corpusFilter:''};
+let _stats=null,_proj=null;
+const invalidate=()=>{_stats=null;_proj=null};
+
+function defaultState(){
+  return {v:1,rev:0,className:'8 «в» взвод',
+    settings:{perDay:2,startDate:nextWeekday(todayStr()),startSid:null},
+    students:DEFAULT_NAMES.map((n,i)=>({id:'s'+(i+1),name:n,active:true})),
+    days:{},seq:0,uid:1000,log:[],corpus:[]};
+}
+function sanitize(o){
+  if(!o||typeof o!=='object') throw new Error('Неверный формат файла');
+  if(o.state&&o.app==='duty-journal') o=o.state;
+  if(!Array.isArray(o.students)||!o.students.length||typeof o.days!=='object'||!o.days) throw new Error('В файле нет списка учеников или истории');
+  o.students=o.students.map((s,i)=>({id:String(s.id||'s'+(i+1)),name:String(s.name||'').trim(),active:s.active!==false})).filter(s=>s.name);
+  const set=o.settings||{};
+  o.settings={perDay:[2,3].includes(+set.perDay)?+set.perDay:2,startDate:/^\d{4}-\d{2}-\d{2}$/.test(set.startDate||'')?set.startDate:nextWeekday(todayStr()),startSid:set.startSid||null};
+  o.className=String(o.className||'8 «в» взвод');
+  for(const d of Object.keys(o.days)){
+    const day=o.days[d]; if(!day||!Array.isArray(day.slots)) day&&(day.slots=[]);
+    o.days[d]={need:+day.need||o.settings.perDay,off:!!day.off,slots:(day.slots||[]).filter(sl=>sl&&sl.sid)};
+  }
+  o.v=1;o.rev=o.rev|0;o.seq=o.seq|0;o.uid=Math.max(o.uid|0,1000);o.log=Array.isArray(o.log)?o.log.slice(-500):[];
+  o.corpus=Array.isArray(o.corpus)?o.corpus.filter(e=>e&&/^\d{4}-\d{2}-\d{2}$/.test(e.date||'')&&Array.isArray(e.sids)).map(e=>({id:String(e.id||'c'+Math.random().toString(36).slice(2,8)),date:e.date,sids:e.sids.map(String),note:String(e.note||''),ts:e.ts|0})):[];
+  return o;
+}
+
+/* ---------- хранение ---------- */
+const LS_KEY='duty-journal.v1';
+let storeMode='memory', dbRef=null, saving=false, pendingSave=false, saveTimer=null, dbNote='';
+function loadLocal(){try{const t=localStorage.getItem(LS_KEY);return t?sanitize(JSON.parse(t)):null}catch(e){return null}}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));return true}catch(e){return false}}
+function save(){
+  const okLocal=saveLocal();
+  if(dbRef){clearTimeout(saveTimer);saveTimer=setTimeout(flushDb,350)}
+  else storeMode=okLocal?'local':'memory';
+  updateBadge();
+}
+async function flushDb(){
+  if(!dbRef) return;
+  if(saving){pendingSave=true;return}
+  saving=true;
+  try{
+    const json=JSON.stringify(state);
+    if(json.length>240000){dbNote='Данные слишком большие для облака. Сделайте резервную копию и очистите старые недели.';storeMode='local';}
+    else{await dbRef.set({json,rev:state.rev,updatedAt:Date.now()});storeMode='db';dbNote=''}
+  }catch(e){
+    const code=e&&e.code;
+    if(code==='invalid_argument'||code==='revoked'||code==='not_granted'){dbRef=null;storeMode=saveLocal()?'local':'memory';dbNote='Нет права записи в облако. Данные хранятся в этом браузере.'}
+    else {storeMode='local';dbNote='Облако временно недоступно. Данные сохранены в браузере.'}
+  }finally{
+    saving=false; updateBadge();
+    if(pendingSave){pendingSave=false;flushDb()}
+  }
+}
+function updateBadge(){
+  const el=document.getElementById('storeBadge'); if(!el) return;
+  const m={db:['','Сохранено в облаке'],local:['warn','Сохранено в этом браузере'],memory:['bad','Не сохраняется: сделайте копию']}[storeMode];
+  el.className='store '+m[0]; el.lastElementChild.textContent=m[1]; el.title=dbNote||'Где хранятся данные';
+}
+async function connectDb(){
+  try{
+    const c=window.claude; if(!c||!c.use) return;
+    const db=await c.use('db'); if(!db) return;
+    const ref=db.doc('duty/state');
+    const snap=await ref.get();
+    if(snap.exists){
+      const d=snap.data();
+      if(d&&typeof d.json==='string'&&(d.rev|0)>(state.rev|0)){
+        try{adopt(JSON.parse(d.json),false)}catch(e){}
+      }
+    }
+    dbRef=ref; storeMode='db';
+    if(!snap.exists||(state.rev|0)>((snap.data()||{}).rev|0)) flushDb();
+    ref.onSnapshot(s=>{
+      if(s.metadata&&s.metadata.hasPendingWrites) return;
+      if(!s.exists) return;
+      const d=s.data(); if(!d||typeof d.json!=='string') return;
+      if((d.rev|0)>(state.rev|0)){ try{adopt(JSON.parse(d.json),true)}catch(e){} }
+    },()=>{});
+    updateBadge();
+  }catch(e){}
+}
+function adopt(obj,notify){
+  state=sanitize(obj); undoStack=[];redoStack=[];invalidate();
+  ensureDays(curDay()); saveLocal(); render();
+  if(notify) toast('Данные обновлены с другого устройства');
+}
+
+/* ---------- изменения: всё через commit, чтобы работала отмена ---------- */
+function commit(label,fn){
+  const before=JSON.stringify(state);
+  try{fn()}catch(e){console.error(e);state=JSON.parse(before);invalidate();toast('Ошибка: '+e.message);render();return false}
+  undoStack.push({label,json:before}); if(undoStack.length>60) undoStack.shift(); redoStack=[];
+  state.rev=(state.rev|0)+1;
+  afterChange(); return true;
+}
+function afterChange(){invalidate();ensureDays(curDay());save();render()}
+function undo(){
+  const e=undoStack.pop(); if(!e){toast('Нечего отменять');return}
+  redoStack.push({label:e.label,json:JSON.stringify(state)});
+  const rev=state.rev; state=JSON.parse(e.json); state.rev=rev+1; afterChange(); toast('Отменено: '+e.label,{redo:true});
+}
+function redo(){
+  const e=redoStack.pop(); if(!e) return;
+  undoStack.push({label:e.label,json:JSON.stringify(state)});
+  const rev=state.rev; state=JSON.parse(e.json); state.rev=rev+1; afterChange(); toast('Возвращено: '+e.label);
+}
+function logAdd(text){state.log.push({ts:Date.now(),text});if(state.log.length>500) state.log.shift()}
+
+/* ---------- модель ---------- */
+const stById=id=>state.students.find(s=>s.id===id);
+const nameOf=id=>{const s=stById(id);return s?s.name:'(удалён)'};
+const isActive=id=>{const s=stById(id);return !!s&&s.active};
+const sortedDates=()=>Object.keys(state.days).sort();
+function allSlots(){const out=[];for(const date of sortedDates()){const day=state.days[date];for(const sl of day.slots) out.push({date,day,sl})}return out}
+const firstDay=()=>nextWeekday(state.settings.startDate);
+const curDay=()=>nextWeekday(todayStr());
+
+function cursorSid(){
+  let best=null;
+  for(const {sl} of allSlots()) if(sl.src==='q'&&(!best||sl.seq>best.seq)) best=sl;
+  return best?best.sid:null;
+}
+function nextQ(afterSid,excluded){
+  const L=state.students,n=L.length; if(!n) return null;
+  let start;
+  if(afterSid==null){const i=state.settings.startSid?L.findIndex(x=>x.id===state.settings.startSid):0;start=i<0?0:i}
+  else{const i=L.findIndex(x=>x.id===afterSid);start=(i+1)%n}
+  for(let k=0;k<n;k++){const s=L[(start+k)%n];if(s.active&&!excluded.has(s.id)) return s.id}
+  return null;
+}
+/* ученики, которых после болезни вернули в очередь и которые ещё не заступили на замену */
+function pendingReturns(){
+  const rs={},best={};
+  const slots=allSlots();
+  for(const {sl} of slots) if(sl.src==='r') rs[sl.sid]=Math.max(rs[sl.sid]||0,sl.seq);
+  for(const {sl} of slots) if(sl.st==='sick'&&sl.ret!=null&&!(rs[sl.sid]>sl.ret)){if(best[sl.sid]==null||sl.ret<best[sl.sid]) best[sl.sid]=sl.ret}
+  return Object.entries(best).sort((a,b)=>a[1]-b[1]).map(e=>e[0]).filter(isActive);
+}
+function sickState(sl,rsMap){
+  if(sl.ret==null) return 'wait';
+  return (rsMap[sl.sid]>sl.ret)?'done':'queued';
+}
+function returnSeqMap(){const rs={};for(const {sl} of allSlots()) if(sl.src==='r') rs[sl.sid]=Math.max(rs[sl.sid]||0,sl.seq);return rs}
+
+function drawFor(date){
+  const day=state.days[date], ex=new Set(day.slots.map(s=>s.sid));
+  const pr=pendingReturns().find(sid=>!ex.has(sid));
+  if(pr) return {sid:pr,src:'r'};
+  const sid=nextQ(cursorSid(),ex);
+  return sid?{sid,src:'q'}:null;
+}
+function normalize(date,withLog){
+  const day=state.days[date]; if(!day||day.off) return;
+  const cnt=()=>day.slots.filter(s=>s.st==='done'||s.st==='planned').length;
+  let g=0;
+  while(cnt()>day.need&&g++<60){
+    let idx=-1;
+    for(let i=day.slots.length-1;i>=0;i--){const s=day.slots[i];if(s.st==='planned'&&s.src!=='m'){idx=i;break}}
+    if(idx<0) break; day.slots.splice(idx,1);
+  }
+  while(cnt()<day.need&&g++<120){
+    const d=drawFor(date); if(!d) break;
+    day.slots.push({id:'l'+(state.uid++),sid:d.sid,st:'planned',src:d.src,seq:++state.seq});
+    if(withLog) logAdd(fmtDM(date)+' · '+nameOf(d.sid)+(d.src==='r'?' вернулся(ась) в очередь и назначен(а) на замену':' назначен(а) на замену'));
+  }
+}
+/* Пересчёт дня после правки. Если в следующих днях ещё нет отметок, их назначения
+   сначала сбрасываются, а потом заново берутся из очереди по порядку. */
+function renormalize(date,withLog){
+  const later=sortedDates().filter(d=>d>date);
+  const canReflow=!later.some(d=>state.days[d].slots.some(s=>s.st!=='planned'));
+  if(canReflow) later.forEach(d=>{const day=state.days[d];if(!day.off) day.slots=day.slots.filter(s=>!(s.st==='planned'&&s.src!=='m'))});
+  normalize(date,withLog);
+  if(canReflow) later.forEach(d=>normalize(d));
+}
+function ensureDays(through){
+  let changed=false, d=firstDay(), guard=0;
+  while(d<=through&&guard++<800){
+    if(!state.days[d]){state.days[d]={need:state.settings.perDay,off:false,slots:[]};normalize(d);changed=true}
+    d=stepSchool(d,1);
+  }
+  if(changed) invalidate();
+  return changed;
+}
+function setStatus(date,slotId,st){
+  const day=state.days[date], sl=day.slots.find(x=>x.id===slotId); if(!sl||sl.st===st) return;
+  const prev=sl.st;
+  if(prev==='refused') delete sl.paid;
+  if(prev==='sick') delete sl.ret;
+  sl.st=st; sl.ts=Date.now();
+  const nm=nameOf(sl.sid), D=fmtDM(date);
+  const txt={done:'дежурил(а)',sick:'болел(а), долг не начислен',refused:'отказался(ась), начислен 1 долг',planned:'отметка сброшена'}[st];
+  logAdd(D+' · '+nm+' — '+txt);
+  renormalize(date,true);
+}
+
+/* прогноз для будущих дней (не сохраняется) */
+function projection(){
+  if(_proj) return _proj;
+  const map={}, cur=curDay(), limit=addDays(cur,28), need=state.settings.perDay;
+  let cursor=cursorSid(); const pend=pendingReturns().slice();
+  let d=stepSchool(cur,1);
+  while(d<=limit){
+    const rec=state.days[d];
+    if(rec&&rec.off){map[d]={off:true,picks:[]};d=stepSchool(d,1);continue}
+    const picks=[],exs=new Set();
+    while(picks.length<need){
+      let sid=null,src='q';
+      const pi=pend.findIndex(x=>!exs.has(x));
+      if(pi>=0){sid=pend.splice(pi,1)[0];src='r'}
+      else{sid=nextQ(cursor,exs);if(sid) cursor=sid}
+      if(!sid) break; exs.add(sid); picks.push({sid,src});
+    }
+    map[d]={picks}; d=stepSchool(d,1);
+  }
+  return _proj=map;
+}
+function dayView(date){
+  const day=state.days[date];
+  if(day) return {kind:day.off?'off':'real',day};
+  if(!isWeekday(date)) return {kind:'weekend'};
+  if(date<firstDay()) return {kind:'before'};
+  const p=projection()[date];
+  if(p) return p.off?{kind:'off',day:null}:{kind:'proj',picks:p.picks};
+  return {kind:'far'};
+}
+function statsMap(){
+  if(_stats) return _stats;
+  const m={}; state.students.forEach(s=>m[s.id]={done:0,sick:0,refused:0,open:0,paid:0,last:null});
+  for(const {date,sl} of allSlots()){
+    const r=m[sl.sid]; if(!r) continue;
+    if(sl.st==='done'){r.done++;if(!r.last||date>r.last) r.last=date}
+    else if(sl.st==='sick') r.sick++;
+    else if(sl.st==='refused'){r.refused++;if(sl.paid) r.paid++;else r.open++}
+  }
+  return _stats=m;
+}
+function debtsOf(sid){const out=[];for(const {date,sl} of allSlots()) if(sl.sid===sid&&sl.st==='refused') out.push({date,sl});return out}
+const stKey=sl=>sl.st==='refused'&&sl.paid?'paid':sl.st;
+const GL={done:'✓',sick:'Б',refused:'−',planned:'П',paid:'↻'};
+const NM={done:'Дежурил',sick:'Болел',refused:'Отказался',planned:'Назначен',paid:'Долг отработан'};
+const stChip=(k,extra)=>'<span class="st st-'+k+'" title="'+NM[k]+'">'+GL[k]+(extra?'<small>'+extra+'</small>':'')+'</span>';
+
+/* ---------- toast / modal ---------- */
+let toastTimer=null;
+function toast(msg,o){
+  const el=document.getElementById('toast'); o=o||{};
+  el.innerHTML='<span>'+esc(msg)+'</span>'+(o.noUndo?'':(o.redo?'<button data-act="redo">Вернуть</button>':'<button data-act="undo">Отменить</button>'));
+  el.className='show'; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{el.className=''},6000);
+}
+let modalOnClose=null;
+function openModal(title,body,actions){
+  closeModal();
+  const root=document.getElementById('modalRoot');
+  const ov=document.createElement('div'); ov.className='overlay';
+  ov.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><h3>'+esc(title)+'</h3><div class="mbody">'+body+'</div><div class="acts"></div></div>';
+  const acts=ov.querySelector('.acts');
+  (actions||[{label:'Закрыть'}]).forEach(a=>{
+    const b=document.createElement('button'); b.className='btn '+(a.cls||''); b.textContent=a.label;
+    b.addEventListener('click',()=>{ if(a.fn){ if(a.fn()===false) return } closeModal() });
+    acts.appendChild(b);
+  });
+  ov.addEventListener('mousedown',e=>{if(e.target===ov) closeModal()});
+  root.appendChild(ov);
+  const f=ov.querySelector('.mbody input,.mbody select,.mbody textarea,.mbody button')||acts.lastElementChild; if(f&&f.focus) setTimeout(()=>f.focus(),30);
+}
+function closeModal(){document.getElementById('modalRoot').innerHTML=''}
+function askConfirm(title,text,okLabel,fn,danger){
+  openModal(title,'<p class="lead">'+text+'</p>',[{label:'Отмена'},{label:okLabel,cls:danger?'danger':'primary',fn}]);
+}
+
+/* ---------- отрисовка ---------- */
+const TABS=[['home','Главная'],['table','Таблица'],['corpus','Дежурные по корпусу'],['debts','Долги'],['students','Ученики'],['history','История'],['data','Данные']];
+function render(){
+  invalidate();
+  const y=window.scrollY;
+  document.getElementById('classLabel').textContent=state.className;
+  const st=statsMap(); const open=Object.values(st).reduce((a,r)=>a+r.open,0);
+  document.getElementById('tabs').innerHTML=TABS.map(t=>'<button class="tab" data-act="tab" data-tab="'+t[0]+'"'+(ui.tab===t[0]?' aria-current="page"':'')+'>'+t[1]+(t[0]==='debts'&&open?'<span class="cnt">'+open+'</span>':'')+'</button>').join('');
+  document.getElementById('btnUndo').disabled=!undoStack.length;
+  document.getElementById('btnRedo').disabled=!redoStack.length;
+  document.getElementById('btnRedo').hidden=!redoStack.length;
+  const app=document.getElementById('app');
+  app.innerHTML=({home:renderHome,table:renderTable,corpus:renderCorpus,debts:renderDebts,students:renderStudents,history:renderHistory,data:renderData})[ui.tab]();
+  if(ui.tab==='table'&&ui.tableRange==='all'){const w=app.querySelector('.tablewrap');if(w) w.scrollLeft=w.scrollWidth}
+  window.scrollTo(0,y); updateBadge();
+}
+
+/* ----- Главная ----- */
+function slotCard(date,day,sl,idx,editable,rs){
+  const k=stKey(sl), nm=nameOf(sl.sid), tags=[];
+  if(sl.src==='r') tags.push('<span class="tag rep">вернулся после болезни</span>');
+  else if(sl.src==='m') tags.push('<span class="tag">назначен вручную</span>');
+  else if(idx>=day.need) tags.push('<span class="tag rep">замена</span>');
+  let note='';
+  if(sl.st==='refused'){
+    note=sl.paid?'<div class="note"><span class="badge paid">долг отработан '+fmtDMY(sl.paid.date)+'</span></div>'
+      :'<div class="note"><span class="badge">долг +1</span>'+(editable?'<button class="btn sm" data-act="payOne" data-slot="'+sl.id+'" data-date="'+date+'">Отработал долг</button>':'')+'</div>';
+  } else if(sl.st==='sick'){
+    const ss=sickState(sl,rs);
+    note='<div class="note"><span class="badge sick">болезнь, долга нет</span>'+
+      (ss==='wait'?'<button class="btn sm" data-act="ret" data-slot="'+sl.id+'" data-date="'+date+'">Вернуть в очередь</button>':
+       ss==='queued'?'<span>ждёт замены в очереди</span><button class="btn sm" data-act="unret" data-slot="'+sl.id+'" data-date="'+date+'">Отменить возврат</button>':'<span>дежурство наверстал(а)</span>')+'</div>';
+  }
+  const mk=(st,gl,label)=>'<button class="mk k-'+st+(sl.st===st?' on':'')+'" data-act="mark" data-date="'+date+'" data-slot="'+sl.id+'" data-st="'+st+'" aria-pressed="'+(sl.st===st)+'"><b>'+gl+'</b>'+label+'</button>';
+  const sc=k==='paid'?'s-paid':'s-'+sl.st;
+  return '<li class="slot '+sc+'"><div class="who"><span class="nm">'+esc(nm)+'</span>'+(tags.length?'<div class="tags">'+tags.join('')+'</div>':'')+note+'</div>'+
+    (editable?'<div class="marks">'+mk('done','✓','Дежурил')+mk('sick','Б','Болел')+mk('refused','−','Отказался')+'</div>':'<div>'+stChip(k)+'</div>')+
+    (editable&&(sl.st!=='planned'||sl.src==='m')?'<div class="note" style="grid-column:1/-1">'+(sl.st!=='planned'?'<button class="btn sm" data-act="mark" data-date="'+date+'" data-slot="'+sl.id+'" data-st="planned">Сбросить отметку</button>':'')+(sl.st==='planned'&&sl.src==='m'?'<button class="btn sm" data-act="rmSlot" data-date="'+date+'" data-slot="'+sl.id+'">Убрать из дежурных</button>':'')+'</div>':'')+
+    '</li>';
+}
+function renderHome(){
+  const today=todayStr(), cur=curDay(), vd=ui.viewDate||cur, v=dayView(vd);
+  const rs=returnSeqMap();
+  const wkend=!isWeekday(today);
+  /* неотмеченные дни */
+  const unmarked=sortedDates().filter(d=>d<today&&!state.days[d].off&&state.days[d].slots.some(s=>s.st==='planned'));
+  let h='<section class="hero"><div><span class="eyebrow">Сегодня</span><h1>'+fmtLong(today)+'</h1>'+
+    (wkend?'<p class="sub">Сегодня выходной. Ближайший учебный день: '+WD[parse(cur).getDay()].toLowerCase()+', '+fmtDayMonth(cur)+'.</p>':'')+'</div>'+
+    '<div class="daynav"><button class="btn icon" data-act="dayPrev" aria-label="Предыдущий учебный день">‹</button>'+
+    '<div class="daylabel"><b>'+WD[parse(vd).getDay()]+'</b><span>'+fmtDayMonth(vd)+' '+parse(vd).getFullYear()+'</span></div>'+
+    '<button class="btn icon" data-act="dayNext" aria-label="Следующий учебный день">›</button>'+
+    '<button class="btn" data-act="dayToday"'+(vd===cur?' disabled':'')+'>Сегодня</button>'+
+    '<input type="date" id="dayPick" data-change="dayPick" value="'+vd+'" aria-label="Выбрать дату"></div></section>';
+  if(unmarked.length) h+='<div class="banner"><span><b>Не отмечено:</b> '+unmarked.length+' '+plural(unmarked.length,['день','дня','дней'])+' с неотмеченными дежурными (с '+fmtDM(unmarked[0])+').</span><button class="btn sm" data-act="goDay" data-date="'+unmarked[0]+'">Перейти</button></div>';
+  h+='<div class="home"><div class="col">';
+  /* дежурные */
+  h+='<section class="card o1"><div class="card-head"><h2>Дежурные <small>'+WD[parse(vd).getDay()].toLowerCase()+', '+fmtDayMonth(vd)+'</small></h2></div>';
+  if(v.kind==='real'){
+    const day=v.day, c={done:0,planned:0}; day.slots.forEach(s=>{if(s.st==='done')c.done++;if(s.st==='planned')c.planned++});
+    let pips=''; for(let i=0;i<Math.max(day.need,c.done);i++) pips+='<span class="pip'+(i<c.done?' on':'')+'">'+(i<c.done?'✓':i+1)+'</span>';
+    h+='<div class="progress">'+pips+'<span class="lead" style="margin-left:6px">Отдежурили '+c.done+' из '+day.need+'</span></div>';
+    if(c.done>=day.need&&!c.planned) h+='<div class="banner ok" style="margin-bottom:12px">Дежурство на этот день выполнено.</div>';
+    h+='<ul class="slots">'+day.slots.map((sl,i)=>slotCard(vd,day,sl,i,true,rs)).join('')+'</ul>';
+    const inDay=new Set(day.slots.map(s=>s.sid));
+    const opts=state.students.filter(s=>s.active&&!inDay.has(s.id)).map(s=>'<option value="'+s.id+'">'+esc(s.name)+'</option>').join('');
+    h+='<div class="add-row"><select id="manualSel" aria-label="Ученик"><option value="">Назначить вручную…</option>'+opts+'</select><button class="btn" data-act="addManual" data-date="'+vd+'">Добавить</button><button class="btn" data-act="toggleOff" data-date="'+vd+'">Нет занятий</button></div>';
+  } else if(v.kind==='proj'){
+    h+='<p class="hint" style="margin-bottom:10px">День ещё не наступил. Это прогноз очереди: он изменится, когда вы отметите болезни и отказы.</p><ul class="slots preview">'+
+      v.picks.map(p=>'<li class="slot"><div class="who"><span class="nm">'+esc(nameOf(p.sid))+'</span>'+(p.src==='r'?'<div class="tags"><span class="tag rep">вернулся после болезни</span></div>':'')+'</div><div>'+stChip('planned')+'</div></li>').join('')+'</ul>'+
+      '<div class="add-row"><button class="btn" data-act="toggleOff" data-date="'+vd+'">Отметить как день без занятий</button></div>';
+  } else if(v.kind==='off'){
+    h+='<div class="empty-state">В этот день нет занятий. Очередь не двигается.<br><br><button class="btn" data-act="toggleOff" data-date="'+vd+'">Вернуть учебный день</button></div>';
+  } else if(v.kind==='weekend'){
+    h+='<div class="empty-state">Выходной. Дежурных нет.</div>';
+  } else if(v.kind==='before'){
+    h+='<div class="empty-state">Этот день раньше начала учёта ('+fmtDMY(firstDay())+').</div>';
+  } else h+='<div class="empty-state">Прогноз доступен на четыре недели вперёд.</div>';
+  h+='</section>';
+  /* неделя */
+  const mon=mondayOf(vd);
+  h+='<section class="card o3"><div class="card-head"><h2>Неделя <small>'+fmtDM(mon)+' – '+fmtDM(addDays(mon,4))+'</small></h2><div class="toolbar"><button class="btn sm" data-act="weekPrev" aria-label="Предыдущая неделя">‹ Неделя</button><button class="btn sm" data-act="weekNext" aria-label="Следующая неделя">Неделя ›</button></div></div><div class="week">';
+  for(let i=0;i<5;i++){
+    const d=addDays(mon,i), dv=dayView(d); let lines='';
+    if(dv.kind==='real') lines=dv.day.slots.map(sl=>{const k=stKey(sl);return '<div class="ln k-'+k+'"><b>'+GL[k]+'</b><span>'+esc(nameOf(sl.sid))+'</span></div>'}).join('');
+    else if(dv.kind==='proj') lines=dv.picks.map(p=>'<div class="ln k-planned proj"><b>П</b><span>'+esc(nameOf(p.sid))+'</span></div>').join('');
+    else if(dv.kind==='off') lines='<div class="ln muted">нет занятий</div>';
+    else lines='<div class="ln muted">—</div>';
+    h+='<button class="wd'+(d===vd?' sel':'')+(d===today?' today':'')+(dv.kind==='off'?' off':'')+'" data-act="goDay" data-date="'+d+'"><span class="dn">'+WDS[parse(d).getDay()]+' <em>'+fmtDM(d)+'</em></span>'+lines+'</button>';
+  }
+  h+='</div></section></div><div class="col">';
+  /* очередь */
+  h+='<section class="card o2"><div class="card-head"><h2>Следующие в очереди</h2></div>';
+  const pj=projection(); let shown=0, qh='';
+  for(let d=stepSchool(cur,1),n=0;n<3&&pj[d];d=stepSchool(d,1),n++){
+    if(pj[d].off) continue;
+    qh+='<div class="qday">'+WDS[parse(d).getDay()]+', '+fmtDM(d)+'</div><ul class="chips">'+pj[d].picks.map(p=>'<li class="qchip'+(p.src==='r'?' ret':'')+'">'+esc(nameOf(p.sid))+(p.src==='r'?'<i>после болезни</i>':'')+'</li>').join('')+'</ul>'; shown++;
+  }
+  h+=(qh||'<div class="empty-state">Очередь пуста: добавьте учеников.</div>')+'</section>';
+  /* цифры */
+  const st=statsMap(); const sum=k=>Object.values(st).reduce((a,r)=>a+r[k],0);
+  let weekDone=0; for(let i=0;i<5;i++){const dd=state.days[addDays(mon,i)];if(dd) weekDone+=dd.slots.filter(s=>s.st==='done').length}
+  const sickWait=allSlots().filter(x=>x.sl.st==='sick'&&sickState(x.sl,rs)!=='done');
+  h+='<section class="card o4"><div class="card-head"><h2>Итоги</h2></div><div class="tiles"><div class="tile green"><b>'+sum('done')+'</b><span>дежурств выполнено, на этой неделе '+weekDone+'</span></div><div class="tile red"><b>'+sum('open')+'</b><span>'+plural(sum('open'),['открытый долг','открытых долга','открытых долгов'])+'</span></div><div class="tile amber"><b>'+sickWait.length+'</b><span>болезней без наверстания</span></div></div></section>';
+  /* долги */
+  const dl=state.students.filter(s=>st[s.id].open>0);
+  h+='<section class="card o5"><div class="card-head"><h2>Ученики с долгами</h2></div>'+(dl.length?'<ul class="list">'+dl.map(s=>'<li><div class="lt"><b>'+esc(s.name)+'</b><span>'+st[s.id].open+' '+plural(st[s.id].open,['долг','долга','долгов'])+'</span></div><button class="btn sm" data-act="payStudent" data-sid="'+s.id+'">Отработал долг</button></li>').join('')+'</ul>':'<div class="empty-state">Долгов нет.</div>')+'</section>';
+  /* болезни */
+  const sk=allSlots().filter(x=>x.sl.st==='sick').slice(-8).reverse();
+  h+='<section class="card o6"><div class="card-head"><h2>Отметки о болезни</h2></div>'+(sk.length?'<ul class="list">'+sk.map(x=>{const ss=sickState(x.sl,rs);return '<li><div class="lt"><b>'+esc(nameOf(x.sl.sid))+'</b><span>'+fmtDMY(x.date)+' · долга нет</span></div>'+(ss==='wait'?'<button class="btn sm" data-act="ret" data-slot="'+x.sl.id+'" data-date="'+x.date+'">Вернуть в очередь</button>':ss==='queued'?'<span class="badge sick">в очереди на замену</span>':'<span class="badge ok">наверстал(а)</span>')+'</li>'}).join('')+'</ul>':'<div class="empty-state">Болезней пока не отмечено.</div>')+'</section>';
+  h+='</div></div>';
+  return h;
+}
+
+/* ----- Таблица ----- */
+function tableDates(){
+  const cur=curDay(), anchor=ui.tableAnchor||cur, out=[];
+  if(ui.tableRange==='week'){const m=mondayOf(anchor);for(let i=0;i<5;i++) out.push(addDays(m,i))}
+  else if(ui.tableRange==='month'){const d=parse(anchor);const y=d.getFullYear(),mo=d.getMonth();for(let day=1;day<=31;day++){const x=new Date(y,mo,day,12);if(x.getMonth()!==mo) break;const s=ymd(x);if(isWeekday(s)) out.push(s)}}
+  else{let d=firstDay();while(d<=cur){out.push(d);d=stepSchool(d,1)}}
+  return out;
+}
+function cellHTML(sid,date){
+  const v=dayView(date), nm=esc(nameOf(sid));
+  if(v.kind==='real'){
+    const sl=v.day.slots.find(x=>x.sid===sid);
+    if(sl){const k=stKey(sl);return '<td><button class="cell st-'+k+'" data-act="cell" data-date="'+date+'" data-sid="'+sid+'" title="'+nm+', '+fmtDM(date)+': '+NM[k]+'" aria-label="'+nm+', '+fmtDM(date)+': '+NM[k]+'">'+GL[k]+'</button></td>'}
+    return '<td><button class="cell empty" data-act="cell" data-date="'+date+'" data-sid="'+sid+'" aria-label="'+nm+', '+fmtDM(date)+': не назначен"></button></td>';
+  }
+  if(v.kind==='proj'){const p=v.picks.find(x=>x.sid===sid);return '<td>'+(p?'<span class="cell st-planned proj" title="Прогноз">П</span>':'')+'</td>'}
+  if(v.kind==='off') return '<td class="offc" title="Нет занятий">·</td>';
+  return '<td></td>';
+}
+function renderTable(){
+  const dates=tableDates(), st=statsMap(), cur=curDay(), today=todayStr();
+  const r=ui.tableRange;
+  let title='';
+  if(r==='week'){title=fmtDM(dates[0])+' – '+fmtDM(dates[4])}
+  else if(r==='month'){const d=parse(ui.tableAnchor||cur);title=MON_NOM[d.getMonth()]+' '+d.getFullYear()}
+  else title='с '+fmtDMY(firstDay());
+  let h='<section class="card"><div class="card-head"><div class="toolbar">'+
+    '<div class="seg" role="group" aria-label="Период">'+[['week','Неделя'],['month','Месяц'],['all','Всё время']].map(x=>'<button data-act="range" data-r="'+x[0]+'" aria-pressed="'+(r===x[0])+'">'+x[1]+'</button>').join('')+'</div>'+
+    (r!=='all'?'<button class="btn icon" data-act="tblPrev" aria-label="Назад">‹</button><b class="num" style="min-width:110px;text-align:center">'+title+'</b><button class="btn icon" data-act="tblNext" aria-label="Вперёд">›</button><button class="btn" data-act="tblNow">Сегодня</button>':'<b>'+title+'</b>')+
+    '</div><button class="btn" data-act="exportCsv">Скачать таблицу (CSV)</button></div>'+
+    '<div class="legend" style="margin-bottom:12px">'+[['done','дежурил'],['sick','болел'],['refused','отказался, долг'],['planned','назначен, не отмечен'],['paid','долг отработан']].map(x=>'<span>'+stChip(x[0])+x[1]+'</span>').join('')+'<span class="hint">Бледная П: прогноз на будущие дни. Нажмите на клетку, чтобы изменить статус.</span></div>';
+  h+='<div class="tablewrap"><table class="grid"><thead><tr><th class="who">Ученик</th>'+dates.map(d=>{const v=dayView(d);return '<th class="d'+(d===today?' today':'')+(v.kind==='off'?' offc':'')+'">'+WDS[parse(d).getDay()]+'<b>'+fmtDM(d)+'</b></th>'}).join('')+'<th class="tot" title="Всего выполнено дежурств">✓</th><th class="tot" title="Текущая задолженность">Долг</th></tr></thead><tbody>';
+  state.students.forEach((s,i)=>{
+    const r2=st[s.id];
+    h+='<tr class="'+(s.active?'':'inact')+'"><th class="who" scope="row"><span class="n">'+(i+1)+'</span>'+esc(s.name)+(r2.open?'<span class="dot" title="Есть долг"></span>':'')+'</th>'+dates.map(d=>cellHTML(s.id,d)).join('')+'<td class="tot ok">'+r2.done+'</td><td class="tot debt'+(r2.open?' has':'')+'">'+r2.open+'</td></tr>';
+  });
+  h+='</tbody></table></div><p class="hint" style="margin-top:10px">В конце строки: сколько дежурств выполнено за всё время и сколько долгов сейчас.</p></section>';
+  return h;
+}
+
+
+/* ----- Дежурные по корпусу: отдельный журнал, без очереди и назначений ----- */
+function corpusChecks(cls,selected){
+  return '<div class="chk-grid">'+state.students.map(s=>'<label class="chk'+(s.active?'':' off')+'"><input type="checkbox" class="'+cls+'" value="'+s.id+'"'+((selected||[]).includes(s.id)?' checked':'')+'><span>'+esc(s.name)+'</span></label>').join('')+'</div>';
+}
+function corpusStats(){
+  const m={}; state.students.forEach(s=>m[s.id]={n:0,last:null});
+  state.corpus.forEach(e=>e.sids.forEach(id=>{const r=m[id];if(!r) return;r.n++;if(!r.last||e.date>r.last) r.last=e.date}));
+  return m;
+}
+function renderCorpus(){
+  const cs=corpusStats(), flt=ui.corpusFilter||'';
+  const list=state.corpus.filter(e=>!flt||e.sids.includes(flt)).slice().sort((a,b)=>b.date.localeCompare(a.date)||(b.ts-a.ts));
+  let h='<div class="corpus"><section class="card"><div class="card-head"><h2>Новая запись</h2></div><div class="stack">'+
+    '<p class="hint">Это отдельный журнал. Очередь и дежурства в классе он не затрагивает.</p>'+
+    '<div class="field"><label for="cDate">Дата</label><input type="date" id="cDate" value="'+todayStr()+'"></div>'+
+    '<div class="field"><span class="lbl">Кто дежурил по корпусу</span>'+corpusChecks('cNew',[])+'</div>'+
+    '<div class="field"><label for="cNote">Комментарий (необязательно)</label><input type="text" id="cNote" placeholder="Например: вторая смена"></div>'+
+    '<div><button class="btn primary" data-act="corpusAdd">Добавить в журнал</button></div></div></section>';
+  h+='<section class="card c-journal"><div class="card-head"><h2>Журнал <small>'+list.length+' '+plural(list.length,['запись','записи','записей'])+'</small></h2><div class="toolbar"><select id="cFilter" data-change="corpusFilter" aria-label="Показать записи ученика"><option value="">Все ученики</option>'+state.students.map(s=>'<option value="'+s.id+'"'+(flt===s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</select><button class="btn sm" data-act="corpusCsv">Скачать (CSV)</button></div></div>'+
+    (list.length?'<ul class="list">'+list.map(e=>'<li><div class="lt"><b>'+WDS[parse(e.date).getDay()]+', '+fmtDMY(e.date)+'</b><span style="color:var(--ink)">'+e.sids.map(id=>esc(nameOf(id))).join(', ')+'</span>'+(e.note?'<span>'+esc(e.note)+'</span>':'')+'</div><span style="display:flex;gap:6px"><button class="btn sm" data-act="corpusEdit" data-id="'+e.id+'">Изменить</button><button class="btn sm danger" data-act="corpusDel" data-id="'+e.id+'">Удалить</button></span></li>').join('')+'</ul>'
+      :'<div class="empty-state">'+(state.corpus.length?'У этого ученика записей нет.':'Записей пока нет. Добавьте первое дежурство по корпусу слева.')+'</div>')+'</section>';
+  h+='<section class="card"><div class="card-head"><h2>Сколько раз дежурили</h2></div><ul class="list">'+state.students.map(s=>{const r=cs[s.id];return '<li><div class="lt"><b>'+esc(s.name)+'</b><span>'+(r.last?'последний раз '+fmtDMY(r.last):'ещё не дежурил(а)')+'</span></div><span class="badge'+(r.n?' ok':'')+'" style="'+(r.n?'':'background:var(--line-2);color:var(--muted)')+'">'+r.n+'</span></li>'}).join('')+'</ul></section></div>';
+  return h;
+}
+function readChecks(cls,root){return [...(root||document).querySelectorAll('input.'+cls+':checked')].map(x=>x.value)}
+function corpusNames(sids){return sids.map(nameOf).join(', ')}
+function corpusEditModal(id){
+  const e=state.corpus.find(x=>x.id===id); if(!e) return;
+  openModal('Изменить запись','<div class="stack"><div class="field"><label for="ceDate">Дата</label><input type="date" id="ceDate" value="'+e.date+'"></div><div class="field"><span class="lbl">Кто дежурил</span>'+corpusChecks('cEdit',e.sids)+'</div><div class="field"><label for="ceNote">Комментарий</label><input type="text" id="ceNote" value="'+esc(e.note)+'"></div></div>',
+    [{label:'Отмена'},{label:'Сохранить',cls:'primary',fn:()=>{
+      const date=document.getElementById('ceDate').value, sids=state.students.map(s=>s.id).filter(x=>readChecks('cEdit').includes(x)), note=document.getElementById('ceNote').value.trim();
+      if(!date||!sids.length){toast('Нужны дата и хотя бы один ученик',{noUndo:true});return false}
+      commit('Запись по корпусу изменена',()=>{const x=state.corpus.find(z=>z.id===id);x.date=date;x.sids=sids;x.note=note;logAdd('Корпус: запись изменена, '+fmtDM(date)+': '+corpusNames(sids))});
+    }}]);
+}
+
+/* ----- Долги ----- */
+function renderDebts(){
+  const st=statsMap(); const tot=k=>Object.values(st).reduce((a,r)=>a+r[k],0);
+  const list=state.students.filter(s=>ui.showAllDebts||st[s.id].refused>0);
+  let h='<section class="card"><div class="card-head"><h2>Долги</h2><label class="hint"><input type="checkbox" data-change="showAll" '+(ui.showAllDebts?'checked':'')+'> показать всех учеников</label></div>'+
+    '<div class="tiles" style="margin-bottom:6px"><div class="tile red"><b>'+tot('open')+'</b><span>текущая задолженность</span></div><div class="tile"><b>'+tot('refused')+'</b><span>отказов за всё время</span></div><div class="tile green"><b>'+tot('paid')+'</b><span>долгов отработано</span></div></div>'+
+    '<p class="hint">Каждый отказ создаёт один долг. Болезнь долг не создаёт. Долги не удаляются сами: закрыть долг можно только кнопкой «Отработал долг».</p></section>';
+  if(!list.length) h+='<div class="empty-state">Отказов пока не было, долгов нет.</div>';
+  list.sort((a,b)=>st[b.id].open-st[a.id].open);
+  h+=list.map(s=>{
+    const r=st[s.id], ds=debtsOf(s.id);
+    return '<section class="card"><div class="card-head"><h2>'+esc(s.name)+(r.open?' <span class="badge">долг: '+r.open+'</span>':' <span class="badge ok">долгов нет</span>')+'</h2>'+
+      '<button class="btn primary" data-act="payStudent" data-sid="'+s.id+'"'+(r.open?'':' disabled')+'>Отработал долг</button></div>'+
+      '<dl class="kv"><dt>Отказов</dt><dd class="num">'+r.refused+'</dd><dt>Текущая задолженность</dt><dd class="num">'+r.open+'</dd><dt>Отработано</dt><dd class="num">'+r.paid+'</dd></dl>'+
+      (ds.length?'<h3 class="lbl" style="margin:14px 0 4px">История</h3><ul class="list">'+ds.map(x=>'<li><div class="lt"><b>Отказ '+fmtDMY(x.date)+'</b><span>'+(x.sl.paid?'отработан '+fmtDMY(x.sl.paid.date)+(x.sl.paid.note?' · '+esc(x.sl.paid.note):''):'ещё не отработан')+'</span></div>'+
+        (x.sl.paid?'<span style="display:flex;gap:8px;align-items:center">'+stChip('paid')+'<button class="btn sm" data-act="unpay" data-slot="'+x.sl.id+'" data-date="'+x.date+'">Отменить отработку</button></span>':'<span style="display:flex;gap:8px;align-items:center">'+stChip('refused')+'<button class="btn sm" data-act="payOne" data-slot="'+x.sl.id+'" data-date="'+x.date+'">Отработал долг</button></span>')+'</li>').join('')+'</ul>':'')+'</section>';
+  }).join('');
+  return h;
+}
+
+/* ----- Ученики ----- */
+function renderStudents(){
+  const st=statsMap();
+  const pr=pendingReturns()[0]; const nextId=pr||nextQ(cursorSid(),new Set());
+  let h='<div class="two"><section class="card"><div class="card-head"><h2>Список класса <small>'+state.students.length+' '+plural(state.students.length,['ученик','ученика','учеников'])+'</small></h2></div>'+
+    '<p class="hint" style="margin-bottom:8px">Очередь идёт сверху вниз. «Вне очереди» временно пропускает ученика, история сохраняется.</p><div>';
+  state.students.forEach((s,i)=>{
+    const r=st[s.id];
+    h+='<div class="srow'+(s.active?'':' off')+(s.id===nextId?' next':'')+'"><span class="idx">'+(i+1)+'</span><div class="nm"><input type="text" value="'+esc(s.name)+'" data-change="rename" data-sid="'+s.id+'" aria-label="Имя ученика '+(i+1)+'"></div>'+
+      '<div class="ctl"><button class="btn sm icon" data-act="up" data-sid="'+s.id+'" aria-label="Выше"'+(i===0?' disabled':'')+'>↑</button><button class="btn sm icon" data-act="down" data-sid="'+s.id+'" aria-label="Ниже"'+(i===state.students.length-1?' disabled':'')+'>↓</button>'+
+      '<button class="btn sm" data-act="toggleActive" data-sid="'+s.id+'">'+(s.active?'Вне очереди':'В очередь')+'</button><button class="btn sm danger" data-act="delStudent" data-sid="'+s.id+'">Удалить</button></div>'+
+      '<div class="meta">'+(s.id===nextId?'<b style="color:var(--accent)">следующий в очереди</b>':'')+(s.active?'':'<span>вне очереди</span>')+'<span>✓ '+r.done+'</span><span>Б '+r.sick+'</span><span>− '+r.refused+'</span>'+(r.open?'<span style="color:var(--ref)">долг '+r.open+'</span>':'')+(r.last?'<span>последний раз '+fmtDM(r.last)+'</span>':'')+'</div></div>';
+  });
+  h+='</div></section><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><section class="card"><div class="card-head"><h2>Добавить ученика</h2></div><div class="form-row"><input type="text" id="newName" placeholder="Фамилия И." aria-label="Имя нового ученика"><button class="btn primary" data-act="addStudent">Добавить в конец</button></div></section>'+
+    '<section class="card"><div class="card-head"><h2>Добавить списком</h2></div><div class="field"><label for="bulk">По одному имени в строке. Уже есть в списке: пропускаются.</label><textarea id="bulk" rows="6" placeholder="Иванов И.&#10;Петров П."></textarea></div><div style="margin-top:10px"><button class="btn" data-act="bulkAdd">Добавить из текста</button></div></section></div></div>';
+  return h;
+}
+
+/* ----- История ----- */
+function renderHistory(){
+  const dates=sortedDates().filter(d=>d<=addDays(curDay(),0)); const weeks={};
+  dates.forEach(d=>{(weeks[mondayOf(d)]=weeks[mondayOf(d)]||[]).push(d)});
+  const keys=Object.keys(weeks).sort().reverse(); const curW=mondayOf(curDay());
+  let h='<section class="card"><div class="card-head"><h2>История по неделям</h2></div>';
+  if(!keys.length) h+='<div class="empty-state">История появится после первого учебного дня.</div>';
+  h+='<div class="stack">'+keys.map(k=>{
+    const ds=weeks[k], all=ds.flatMap(d=>state.days[d].slots), done=all.filter(s=>s.st==='done').length, sick=all.filter(s=>s.st==='sick').length, ref=all.filter(s=>s.st==='refused').length;
+    const open=ui.histOpen===null?(k===curW):(ui.histOpen===k);
+    return '<details class="wk" data-wk="'+k+'"'+(open?' open':'')+'><summary>'+fmtDM(k)+' – '+fmtDM(addDays(k,4))+'<span class="badge ok">✓ '+done+'</span>'+(sick?'<span class="badge sick">Б '+sick+'</span>':'')+(ref?'<span class="badge">− '+ref+'</span>':'')+'</summary><div class="inside">'+
+      ds.slice().reverse().map(d=>{const day=state.days[d];return '<div class="hday"><button class="dl" data-act="goDay" data-date="'+d+'">'+WDS[parse(d).getDay()]+', '+fmtDM(d)+'<span>'+(day.off?'нет занятий':'открыть день')+'</span></button><div class="hrow">'+
+        (day.off?'<span class="muted">Нет занятий</span>':day.slots.map(sl=>{const kk=stKey(sl);return '<span>'+stChip(kk)+esc(nameOf(sl.sid))+'</span>'}).join(''))+'</div></div>'}).join('')+'</div></details>';
+  }).join('')+'</div></section>';
+  const lg=state.log.slice().reverse().slice(0,120);
+  h+='<section class="card"><div class="card-head"><h2>Журнал действий <small>последние '+lg.length+'</small></h2></div>'+(lg.length?lg.map(l=>'<div class="logline"><time>'+fmtTs(l.ts)+'</time><span>'+esc(l.text)+'</span></div>').join(''):'<div class="empty-state">Пока нет записей.</div>')+'</section>';
+  return h;
+}
+
+/* ----- Данные и настройки ----- */
+function hasMarks(){return allSlots().some(x=>x.sl.st!=='planned')}
+function renderData(){
+  const locked=hasMarks();
+  const so=state.students.map(s=>'<option value="'+s.id+'"'+(state.settings.startSid===s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('');
+  const where={db:'в облаке артефакта, доступно с других устройств и копируется в этом браузере',local:'только в этом браузере',memory:'нигде: браузер не разрешил сохранение'}[storeMode];
+  return '<div class="two"><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><section class="card"><div class="card-head"><h2>Настройки</h2></div><div class="stack">'+
+    '<div class="field"><label for="cls">Название класса</label><input type="text" id="cls" value="'+esc(state.className)+'" data-change="className"></div>'+
+    '<div class="field"><label for="perDay">Дежурных в день</label><select id="perDay" data-change="perDay"><option value="2"'+(state.settings.perDay===2?' selected':'')+'>2 человека</option><option value="3"'+(state.settings.perDay===3?' selected':'')+'>3 человека</option></select><span class="hint">В файле со списком написано «2–3 человека». Изменение действует с сегодняшнего дня.</span></div>'+
+    '<div class="field"><label for="startDate">Дата начала учёта</label><input type="date" id="startDate" value="'+state.settings.startDate+'" max="'+curDay()+'" data-change="startDate"'+(locked?' disabled':'')+'></div>'+
+    '<div class="field"><label for="startSid">Начать очередь с ученика</label><select id="startSid" data-change="startSid"'+(locked?' disabled':'')+'><option value="">С начала списка</option>'+so+'</select></div>'+
+    (locked?'<p class="hint">Дату и первого ученика нельзя менять после первых отметок. Чтобы начать заново, сбросьте историю ниже.</p>':'')+
+    '</div></section>'+
+    '<section class="card"><div class="card-head"><h2>Где хранятся данные</h2></div><p class="lead">Сейчас данные хранятся '+where+'.</p>'+(dbNote?'<p class="hint" style="margin-top:6px">'+esc(dbNote)+'</p>':'')+'</section></div>'+
+    '<div style="display:flex;flex-direction:column;gap:16px;min-width:0"><section class="card"><div class="card-head"><h2>Резервная копия</h2></div><div class="stack"><p class="hint">В копию входят ученики, вся история, долги и настройки.</p>'+
+    '<div class="toolbar"><button class="btn primary" data-act="exportJson">Скачать копию (JSON)</button><button class="btn" data-act="importOpen">Восстановить из копии</button></div></div></section>'+
+    '<section class="card"><div class="card-head"><h2>Сброс</h2></div><div class="stack"><p class="hint">Сброс можно отменить кнопкой «Отменить» вверху, пока вы не закрыли страницу.</p><div class="toolbar"><button class="btn danger" data-act="resetHistory">Очистить историю и долги</button><button class="btn danger" data-act="resetAll">Вернуть список из файла</button></div></div></section></div></div>';
+}
+
+/* ---------- действия ---------- */
+function openPayModal(slotId,date){
+  const day=state.days[date], sl=day.slots.find(x=>x.id===slotId); const nm=nameOf(sl.sid);
+  openModal('Отработал долг: '+nm,
+    '<div class="stack"><p class="lead">Отказ от '+fmtDMY(date)+'. Запись об отработке сохранится в истории.</p><div class="field"><label for="payDate">Дата отработки</label><input type="date" id="payDate" value="'+ymd(new Date())+'"></div><div class="field"><label for="payNote">Комментарий (необязательно)</label><input type="text" id="payNote" placeholder="Например: помыл доску"></div></div>',
+    [{label:'Отмена'},{label:'Закрыть долг',cls:'primary',fn:()=>{
+      const dt=document.getElementById('payDate').value||todayStr(), note=document.getElementById('payNote').value.trim();
+      commit('Долг отработан: '+nm,()=>{const s=state.days[date].slots.find(x=>x.id===slotId);s.paid={date:dt,note,ts:Date.now()};logAdd(fmtDM(date)+' · '+nm+' отработал(а) долг'+(note?' ('+note+')':''))});
+      toast('Долг отработан: '+nm);
+    }}]);
+}
+function oldestOpenDebt(sid){return debtsOf(sid).find(x=>!x.sl.paid)}
+function cellModal(date,sid){
+  const v=dayView(date); if(v.kind!=='real') return;
+  const sl=v.day.slots.find(x=>x.sid===sid), nm=nameOf(sid), rs=returnSeqMap();
+  const head=WD[parse(date).getDay()]+', '+fmtDayMonth(date);
+  if(!sl){
+    openModal(nm,'<p class="lead">'+head+'. В этот день ученик не назначен.</p>',[{label:'Закрыть'},{label:'Назначить дежурным',cls:'primary',fn:()=>{doAddManual(date,sid)}}]);
+    return;
+  }
+  const k=stKey(sl);
+  let body='<p class="lead">'+head+'</p><div style="display:flex;align-items:center;gap:8px">Сейчас: '+stChip(k)+' <b>'+NM[k]+'</b></div><div class="mgrid">'+
+    ['done','sick','refused','planned'].map(st=>'<button class="btn k-'+st+(sl.st===st?' on':'')+'" data-act="mark" data-date="'+date+'" data-slot="'+sl.id+'" data-st="'+st+'" data-close="1"><b>'+GL[st]+'</b> '+(st==='planned'?'Сбросить (назначен)':NM[st])+'</button>').join('')+'</div>';
+  if(sl.st==='refused'){
+    body+=sl.paid?'<div class="note"><span class="badge paid">долг отработан '+fmtDMY(sl.paid.date)+'</span><button class="btn sm" data-act="unpay" data-slot="'+sl.id+'" data-date="'+date+'" data-close="1">Отменить отработку</button></div>'
+      :'<div class="note"><span class="badge">долг +1</span><button class="btn sm primary" data-act="payOne" data-slot="'+sl.id+'" data-date="'+date+'" data-close="1">Отработал долг</button></div>';
+  }
+  if(sl.st==='sick'){
+    const ss=sickState(sl,rs);
+    body+='<div class="note"><span class="badge sick">болезнь, долга нет</span>'+(ss==='wait'?'<button class="btn sm" data-act="ret" data-slot="'+sl.id+'" data-date="'+date+'" data-close="1">Вернуть в очередь</button>':ss==='queued'?'<button class="btn sm" data-act="unret" data-slot="'+sl.id+'" data-date="'+date+'" data-close="1">Отменить возврат</button>':'<span>дежурство наверстано</span>')+'</div>';
+  }
+  openModal(nm,body,[{label:'Закрыть'}]);
+}
+function doMark(date,slotId,st){
+  const sl=state.days[date].slots.find(x=>x.id===slotId); if(!sl||sl.st===st) return;
+  if(sl.st==='refused'&&sl.paid&&st!=='refused'){
+    askConfirm('Изменить статус?','У этой отметки есть отработанный долг. Если изменить статус, долг и запись об отработке будут удалены.','Изменить',()=>{doMark2(date,slotId,st)},true); return;
+  }
+  doMark2(date,slotId,st);
+}
+function doMark2(date,slotId,st){
+  const sl=state.days[date].slots.find(x=>x.id===slotId), nm=nameOf(sl.sid);
+  const label=nm+': '+({done:'дежурил',sick:'болел',refused:'отказался (долг +1)',planned:'отметка сброшена'}[st])+' · '+fmtDM(date);
+  if(commit(label,()=>setStatus(date,slotId,st))) toast(label);
+}
+function doAddManual(date,sid){
+  if(!sid) return;
+  const nm=nameOf(sid);
+  if(commit('Назначен вручную: '+nm,()=>{
+    const day=state.days[date]; if(day.slots.some(s=>s.sid===sid)) throw new Error('Ученик уже назначен на этот день');
+    day.slots.push({id:'l'+(state.uid++),sid,st:'planned',src:'m',seq:++state.seq});
+    logAdd(fmtDM(date)+' · '+nm+' назначен(а) вручную'); renormalize(date,true);
+  })) toast(nm+' назначен(а) на '+fmtDM(date));
+}
+function shiftTable(dir){
+  const a=ui.tableAnchor||curDay();
+  if(ui.tableRange==='week') ui.tableAnchor=addDays(a,7*dir);
+  else{const d=parse(a);d.setMonth(d.getMonth()+dir,1);ui.tableAnchor=ymd(d)}
+  render();
+}
+function exportCsvText(){
+  const dates=[];let d=firstDay();while(d<=curDay()){dates.push(d);d=stepSchool(d,1)}
+  const st=statsMap(); const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const rows=[['Ученик'].concat(dates.map(fmtDMY),['Выполнено','Отказов','Долг сейчас','Болел'])];
+  state.students.forEach(s=>{
+    rows.push([s.name].concat(dates.map(dt=>{const day=state.days[dt];if(!day) return '';if(day.off) return 'вых';const sl=day.slots.find(x=>x.sid===s.id);return sl?GL[stKey(sl)]:''}),[st[s.id].done,st[s.id].refused,st[s.id].open,st[s.id].sick]));
+  });
+  return '﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n');
+}
+async function offerFile(filename,text){
+  try{
+    const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;
+    if(dl){await dl.save({filename,data:text});toast('Файл сохранён: '+filename,{noUndo:true});return}
+  }catch(e){ if(e&&e.code==='declined') return; }
+  openModal('Копия данных','<div class="stack"><p class="hint">Скачивание недоступно. Скопируйте текст и сохраните его в файл '+esc(filename)+'.</p><textarea id="copyArea" rows="9" readonly></textarea></div>',
+    [{label:'Закрыть'},{label:'Скопировать',cls:'primary',fn:()=>{const t=document.getElementById('copyArea');t.select();try{navigator.clipboard.writeText(t.value).then(()=>toast('Скопировано',{noUndo:true}),()=>{})}catch(e){}return false}}]);
+  document.getElementById('copyArea').value=text;
+}
+function importModal(){
+  openModal('Восстановить из копии','<div class="stack"><p class="hint">Текущие данные будут заменены данными из копии. Это действие можно отменить.</p><div class="field"><label for="impFile">Файл копии (.json)</label><input type="file" id="impFile" accept=".json,application/json"></div><div class="field"><label for="impText">Или вставьте содержимое копии</label><textarea id="impText" rows="5"></textarea></div><p class="hint" id="impErr" style="color:var(--ref)"></p></div>',
+    [{label:'Отмена'},{label:'Восстановить',cls:'primary',fn:()=>{
+      const txt=document.getElementById('impText').value.trim(), f=document.getElementById('impFile').files[0];
+      const go=t=>{try{const obj=sanitize(JSON.parse(t));const rev=state.rev;commit('Восстановление из копии',()=>{state=obj;state.rev=rev});toast('Данные восстановлены: '+state.students.length+' учеников',{noUndo:false})}catch(e){toast('Не удалось прочитать копию: '+e.message,{noUndo:true})}};
+      if(txt){go(txt);return}
+      if(f){const fr=new FileReader();fr.onload=()=>go(String(fr.result));fr.readAsText(f);return}
+      document.getElementById('impErr').textContent='Выберите файл или вставьте текст копии.';return false;
+    }}]);
+}
+
+const actions={
+  tab(el){ui.tab=el.dataset.tab;render();window.scrollTo(0,0)},
+  undo(){undo()}, redo(){redo()},
+  dayPrev(){ui.viewDate=stepSchool(ui.viewDate||curDay(),-1);render()},
+  dayNext(){ui.viewDate=stepSchool(ui.viewDate||curDay(),1);render()},
+  dayToday(){ui.viewDate=null;render()},
+  goDay(el){ui.viewDate=el.dataset.date;ui.tab='home';closeModal();render();window.scrollTo(0,0)},
+  weekPrev(){ui.viewDate=addDays(ui.viewDate||curDay(),-7);ui.viewDate=isWeekday(ui.viewDate)?ui.viewDate:nextWeekday(ui.viewDate);render()},
+  weekNext(){ui.viewDate=addDays(ui.viewDate||curDay(),7);ui.viewDate=isWeekday(ui.viewDate)?ui.viewDate:nextWeekday(ui.viewDate);render()},
+  mark(el){if(el.dataset.close) closeModal();doMark(el.dataset.date,el.dataset.slot,el.dataset.st)},
+  cell(el){cellModal(el.dataset.date,el.dataset.sid)},
+  addManual(el){const v=document.getElementById('manualSel').value;if(!v){toast('Выберите ученика',{noUndo:true});return}doAddManual(el.dataset.date,v)},
+  rmSlot(el){const date=el.dataset.date,id=el.dataset.slot;const sl=state.days[date].slots.find(x=>x.id===id);commit('Убран из дежурных: '+nameOf(sl.sid),()=>{const day=state.days[date];day.slots=day.slots.filter(x=>x.id!==id);logAdd(fmtDM(date)+' · '+nameOf(sl.sid)+' убран(а) из дежурных');renormalize(date,true)})},
+  toggleOff(el){
+    const date=el.dataset.date, cur=state.days[date], turnOff=!(cur&&cur.off);
+    if(turnOff&&cur&&cur.slots.some(s=>s.st!=='planned')){toast('Сначала сбросьте отметки в этом дне',{noUndo:true});return}
+    commit((turnOff?'День без занятий: ':'Учебный день возвращён: ')+fmtDM(date),()=>{
+      if(!state.days[date]) state.days[date]={need:state.settings.perDay,off:false,slots:[]};
+      const day=state.days[date];
+      if(turnOff){day.off=true;day.slots=[]}
+      else if(date>curDay()){delete state.days[date]}
+      else{day.off=false;day.need=state.settings.perDay;day.slots=[]}
+      logAdd(fmtDM(date)+' · '+(turnOff?'день без занятий':'учебный день возвращён'));
+      if(date<=curDay()) renormalize(date);
+    });
+  },
+  ret(el){const date=el.dataset.date,id=el.dataset.slot;const sl=state.days[date].slots.find(x=>x.id===id);commit('Вернуть в очередь: '+nameOf(sl.sid),()=>{const s=state.days[date].slots.find(x=>x.id===id);s.ret=++state.seq;logAdd(fmtDM(date)+' · '+nameOf(s.sid)+' возвращён(а) в очередь после болезни');renormalize('0000-00-00')});toast(nameOf(sl.sid)+' будет назначен(а) в ближайшую замену')},
+  unret(el){const date=el.dataset.date,id=el.dataset.slot;commit('Возврат отменён',()=>{const s=state.days[date].slots.find(x=>x.id===id);delete s.ret;logAdd(fmtDM(date)+' · возврат в очередь отменён: '+nameOf(s.sid));renormalize('0000-00-00')})},
+  payOne(el){if(el.dataset.close) closeModal();openPayModal(el.dataset.slot,el.dataset.date)},
+  payStudent(el){const d=oldestOpenDebt(el.dataset.sid);if(!d){toast('У ученика нет долгов',{noUndo:true});return}openPayModal(d.sl.id,d.date)},
+  unpay(el){if(el.dataset.close) closeModal();const date=el.dataset.date,id=el.dataset.slot;commit('Отработка отменена',()=>{const s=state.days[date].slots.find(x=>x.id===id);delete s.paid;logAdd(fmtDM(date)+' · '+nameOf(s.sid)+': отработка долга отменена')})},
+  range(el){ui.tableRange=el.dataset.r;ui.tableAnchor=null;render()},
+  tblPrev(){shiftTable(-1)}, tblNext(){shiftTable(1)}, tblNow(){ui.tableAnchor=null;render()},
+  exportCsv(){offerFile('dezhurstva.csv',exportCsvText())},
+  exportJson(){offerFile('dezhurstva-kopiya-'+todayStr()+'.json',JSON.stringify({app:'duty-journal',version:1,exportedAt:new Date().toISOString(),state},null,1))},
+  importOpen(){importModal()},
+  corpusAdd(){
+    const date=document.getElementById('cDate').value, picked=readChecks('cNew'), note=document.getElementById('cNote').value.trim();
+    const sids=state.students.map(s=>s.id).filter(x=>picked.includes(x));
+    if(!date){toast('Укажите дату',{noUndo:true});return}
+    if(!sids.length){toast('Отметьте хотя бы одного ученика',{noUndo:true});return}
+    const label='По корпусу '+fmtDM(date)+': '+corpusNames(sids);
+    if(commit(label,()=>{state.corpus.push({id:'c'+(state.uid++),date,sids,note,ts:Date.now()});logAdd('Корпус '+fmtDM(date)+': '+corpusNames(sids)+(note?' ('+note+')':''))})) toast('Записано: '+label);
+  },
+  corpusEdit(el){corpusEditModal(el.dataset.id)},
+  corpusDel(el){const e=state.corpus.find(x=>x.id===el.dataset.id);if(!e) return;
+    commit('Запись по корпусу удалена',()=>{state.corpus=state.corpus.filter(x=>x.id!==e.id);logAdd('Корпус: удалена запись '+fmtDM(e.date)+': '+corpusNames(e.sids))});toast('Запись удалена: '+fmtDMY(e.date))},
+  corpusCsv(){
+    const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+    const rows=[['Дата','Дежурные по корпусу','Комментарий']].concat(state.corpus.slice().sort((a,b)=>a.date.localeCompare(b.date)||(a.ts-b.ts)).map(e=>[fmtDMY(e.date),corpusNames(e.sids),e.note]));
+    offerFile('dezhurstva-po-korpusu.csv','﻿'+rows.map(r=>r.map(q).join(';')).join('\r\n'));
+  },
+  addStudent(){const inp=document.getElementById('newName');const nm=inp.value.trim().replace(/\s+/g,' ');if(!nm){toast('Введите имя',{noUndo:true});return}
+    if(state.students.some(s=>s.name===nm)){toast('Такой ученик уже есть',{noUndo:true});return}
+    commit('Добавлен ученик: '+nm,()=>{state.students.push({id:'s'+(state.uid++),name:nm,active:true});logAdd('Добавлен ученик: '+nm)})},
+  bulkAdd(){const lines=document.getElementById('bulk').value.split(/\r?\n/).map(x=>x.trim().replace(/\s+/g,' ')).filter(Boolean);
+    const fresh=[...new Set(lines)].filter(n=>!state.students.some(s=>s.name===n));
+    if(!fresh.length){toast('Новых имён нет',{noUndo:true});return}
+    commit('Добавлено учеников: '+fresh.length,()=>{fresh.forEach(n=>state.students.push({id:'s'+(state.uid++),name:n,active:true}));logAdd('Добавлено учеников: '+fresh.join(', '))})},
+  up(el){moveStudent(el.dataset.sid,-1)}, down(el){moveStudent(el.dataset.sid,1)},
+  toggleActive(el){const s=stById(el.dataset.sid);commit((s.active?'Вне очереди: ':'Возвращён в очередь: ')+s.name,()=>{const x=stById(s.id);x.active=!x.active;logAdd(x.name+(x.active?' возвращён(а) в очередь':' выведен(а) из очереди'))})},
+  delStudent(el){const s=stById(el.dataset.sid);
+    if(allSlots().some(x=>x.sl.sid===s.id)||state.corpus.some(e=>e.sids.includes(s.id))){openModal('Нельзя удалить','<p class="lead">У ученика «'+esc(s.name)+'» есть история дежурств или записи по корпусу, поэтому его нельзя удалить без потери записей. Выведите его из очереди: история и долги сохранятся.</p>',[{label:'Понятно'},{label:'Вывести из очереди',cls:'primary',fn:()=>{if(s.active) actions.toggleActive({dataset:{sid:s.id}})}}]);return}
+    askConfirm('Удалить ученика?','«'+esc(s.name)+'» будет удалён(а) из списка. У него нет истории дежурств.','Удалить',()=>{commit('Удалён ученик: '+s.name,()=>{state.students=state.students.filter(x=>x.id!==s.id);if(state.settings.startSid===s.id) state.settings.startSid=null;logAdd('Удалён ученик: '+s.name);invalidate();for(const d of sortedDates()) if(d>=curDay()){}})},true)},
+  resetHistory(){askConfirm('Очистить историю?','Все отметки, болезни, отказы и долги будут удалены. Список учеников останется. Очередь начнётся заново.','Очистить',()=>{commit('Сброс истории',()=>{state.days={};state.seq=0;state.log=[];logAdd('История очищена')})},true)},
+  resetAll(){askConfirm('Вернуть список из файла?','Список учеников станет таким, как в файле со списком, а вся история, долги и журнал по корпусу будут удалены.','Вернуть',()=>{const rev=state.rev;commit('Возврат списка из файла',()=>{state=defaultState();state.rev=rev;logAdd('Список возвращён к исходному')})},true)}
+};
+function moveStudent(id,dir){
+  const i=state.students.findIndex(s=>s.id===id), j=i+dir; if(j<0||j>=state.students.length) return;
+  commit('Порядок списка изменён',()=>{const a=state.students;[a[i],a[j]]=[a[j],a[i]];logAdd('Порядок изменён: '+a[j].name+(dir<0?' выше':' ниже')); renormalize('0000-00-00')});
+}
+const changes={
+  corpusFilter(el){ui.corpusFilter=el.value;render()},
+  dayPick(el){if(el.value){ui.viewDate=el.value;render()}},
+  showAll(el){ui.showAllDebts=el.checked;render()},
+  rename(el){const s=stById(el.dataset.sid),nm=el.value.trim().replace(/\s+/g,' ');if(!nm||nm===s.name){el.value=s.name;return}
+    if(state.students.some(x=>x.name===nm&&x.id!==s.id)){toast('Такой ученик уже есть',{noUndo:true});el.value=s.name;return}
+    commit('Переименован: '+s.name+' → '+nm,()=>{const x=stById(s.id);logAdd('Переименован: '+x.name+' → '+nm);x.name=nm})},
+  className(el){const v=el.value.trim()||'Класс';commit('Название класса',()=>{state.className=v})},
+  perDay(el){const n=+el.value;commit('Дежурных в день: '+n,()=>{state.settings.perDay=n;for(const d of sortedDates()) if(d>=curDay()&&!state.days[d].off){state.days[d].need=n;normalize(d)};logAdd('Дежурных в день: '+n)})},
+  startDate(el){
+    const v=el.value; if(!v) return;
+    if(v>curDay()){toast('Дата начала не может быть позже ближайшего учебного дня',{noUndo:true});render();return}
+    commit('Дата начала учёта',()=>{state.settings.startDate=nextWeekday(v);state.days={};state.seq=0;logAdd('Дата начала учёта: '+fmtDMY(state.settings.startDate))});
+  },
+  startSid(el){const v=el.value||null;commit('Первый в очереди',()=>{state.settings.startSid=v;state.days={};state.seq=0;logAdd('Очередь начинается с: '+(v?nameOf(v):'начала списка'))})}
+};
+
+/* ---------- события ---------- */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]'); if(!el||el.disabled) return;
+  const f=actions[el.dataset.act]; if(f){e.preventDefault();f(el)}
+});
+document.addEventListener('change',e=>{
+  const el=e.target.closest('[data-change]'); if(!el) return;
+  const f=changes[el.dataset.change]; if(f) f(el);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeModal();
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'&&!/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||'')){e.preventDefault();undo()}
+  if(e.key==='Enter'&&e.target&&e.target.id==='newName'){e.preventDefault();actions.addStudent()}
+});
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList&&d.classList.contains('wk')&&d.open){ui.histOpen=d.dataset.wk}},true);
+
+/* ---------- запуск ---------- */
+state=loadLocal()||defaultState();
+if(ensureDays(curDay())){state.rev=(state.rev|0)+1}
+saveLocal(); storeMode=saveLocal()?'local':'memory';
+render();
+connectDb();
+let lastDay=todayStr();
+setInterval(()=>{const t=todayStr();if(t!==lastDay){lastDay=t;if(ensureDays(curDay())){state.rev++;save()}render()}},60000);
+window.__duty={get state(){return state},curDay,projection,pendingReturns,debtsOf,statsMap};
+})();
+</script>
+
+</body></html>
